@@ -1,0 +1,39 @@
+package com.jacaranda.miPrimeraApiClase.security;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.web.AuthenticationEntryPoint;
+
+import com.fasterxml.jackson.core.exc.StreamWriteException;
+import com.fasterxml.jackson.databind.DatabindException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+public class AuthEntryPointJwt implements AuthenticationEntryPoint {
+
+	@Override
+	public void commence(HttpServletRequest request, HttpServletResponse response,
+	org.springframework.security.core.AuthenticationException authException)
+	throws IOException, ServletException {
+	response.addHeader("Content-Type", "application/json");
+	 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+	 
+	 final Map<String, Object> body = new HashMap<>();
+	 body.put("status", HttpServletResponse.SC_UNAUTHORIZED);
+	 body.put("error", "Unauthorized");
+	 body.put("message", authException.getMessage());
+	 body.put("path", request.getServletPath());
+	 
+	 final ObjectMapper mapper = new ObjectMapper();
+	 mapper.writeValue(response.getOutputStream(), body);
+	}
+	
+	
+	
+}
